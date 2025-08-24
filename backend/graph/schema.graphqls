@@ -5,3 +5,20 @@ type Query {
 type Mutation {
   placeholder: String
 }
+
+type User {
+  id: String!
+  email: String!
+  name: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type Media {
+    id: String!
+    link: String!
+    title: String!
+    description: String
+    equipment: [String!]
+}
+

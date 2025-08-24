@@ -1,18 +1,19 @@
-import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 
-final counterProvider = StateNotifierProvider<CounterNotifier, int>((ref) {
-  return CounterNotifier();
-});
+import 'services/auth_service.dart';
+import 'services/graphql_service.dart';
+import 'screens/home_screen.dart';
+import 'screens/login_screen.dart';
 
-class CounterNotifier extends StateNotifier<int> {
-  CounterNotifier() : super(0);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-  void increment() => state++;
-}
+  // Initialize services
+  await AuthService.initialize();
+  await GraphQLService.initialize();
 
-void main() {
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -20,41 +21,21 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
+    return GraphQLProvider(
+      client: ValueNotifier(GraphQLService.client),
+      child: CupertinoApp(
+        title: 'My App',
+        theme: CupertinoThemeData(),
+        home: FutureBuilder<bool>(
+          future: AuthService.isLoggedIn(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CupertinoActivityIndicator();
+            }
 
-class MyHomePage extends HookConsumerWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final counter = ref.watch(counterProvider);
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text('$counter', style: Theme.of(context).textTheme.headlineMedium),
-          ],
+            return snapshot.data == true ? const HomeScreen() : const LoginScreen();
+          },
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => ref.read(counterProvider.notifier).increment(),
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
