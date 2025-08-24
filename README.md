@@ -1,17 +1,49 @@
-# physical_revelry
+# Physical Revelry
 
-A new Flutter project.
+A full-stack application with Flutter mobile frontend and Go backend.
 
-## Getting Started
+## Project Structure
 
-This project is a starting point for a Flutter application.
+This is a monorepo containing:
 
-A few resources to get you started if this is your first Flutter project:
+- **Mobile**: Flutter app with Riverpod state management
+- **Backend**: Go server with GraphQL API
+- **Shared**: Common type definitions
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Quick Start
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-# physical_revelry
+### Prerequisites
+
+- Flutter SDK
+- Go 1.21+
+- Docker & Docker Compose (optional)
+
+### Development
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd physical_revelry
+   ```
+
+2. **Start the mobile app**
+   ```bash
+   cd mobile/
+   flutter pub get
+   flutter run
+   ```
+
+3. **Start the backend** (in a new terminal)
+   ```bash
+   cd backend/
+   go run cmd/server/main.go
+   ```
+
+4. **Or use Docker Compose** (from root directory)
+   ```bash
+   docker-compose up
+   ```
+
+## Development Commands
+
+See `CLAUDE.md` for detailed development commands and architecture information.

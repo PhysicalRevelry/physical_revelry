@@ -4,53 +4,81 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Flutter mobile application project named "physical_revelry" that targets both Android and iOS platforms. It's currently a basic Flutter starter app with a counter demo but appears to be set up for future development of a more substantial application.
+This is a monorepo for the "physical_revelry" application containing:
+- **Mobile**: Flutter app using Riverpod for state management and Hooks for widget lifecycle
+- **Backend**: Go server with GraphQL API
+- **Shared**: Common types and utilities
+
+## Monorepo Structure
+
+```
+physical_revelry/
+├── .github/workflows/    # CI/CD workflows
+├── backend/             # Go backend with GraphQL
+│   ├── cmd/server/      # Main server entry point
+│   ├── internal/        # Private application code
+│   ├── graph/           # GraphQL schema and resolvers
+│   └── pkg/             # Public packages
+├── mobile/              # Flutter mobile app
+│   ├── lib/             # Dart source code
+│   ├── test/            # Widget and unit tests
+│   ├── android/         # Android-specific files
+│   └── ios/             # iOS-specific files
+├── shared/types/        # Shared type definitions
+├── docker-compose.yml   # Local development orchestration
+└── .env.example         # Environment variables template
+```
 
 ## Development Commands
 
-### Dependencies and Setup
-- `flutter pub get` - Install dependencies
-- `flutter pub upgrade` - Upgrade dependencies to latest versions
-- `flutter pub outdated` - Check for outdated dependencies
+### Mobile App (Flutter)
+All Flutter commands must be run from the `mobile/` directory:
 
-### Running the App
-- `flutter run` - Run the app (will prompt to select target device)
-- `flutter run -d chrome` - Run in Chrome browser (for web development)
-- `flutter run -d android` - Run on Android device/emulator
-- `flutter run -d ios` - Run on iOS simulator (macOS only)
-
-### Testing and Quality
-- `flutter test` - Run all unit and widget tests
-- `flutter test test/widget_test.dart` - Run specific test file
-- `flutter analyze` - Run static analysis and linting
-- `flutter doctor` - Check Flutter installation and dependencies
-
-### Building
-- `flutter build apk` - Build Android APK
-- `flutter build ios` - Build for iOS (requires Xcode on macOS)
-- `flutter build web` - Build for web deployment
-
-## Project Structure
-
-```
-lib/
-  main.dart           # Main entry point, contains MyApp and MyHomePage widgets
-test/
-  widget_test.dart    # Widget tests for the counter functionality
-android/              # Android-specific configuration and build files
-ios/                  # iOS-specific configuration and build files
+```bash
+cd mobile/
+flutter pub get              # Install dependencies
+flutter run                  # Run the app
+flutter test                 # Run tests
+flutter analyze              # Static analysis
+flutter build apk           # Build Android APK
+flutter build ios           # Build for iOS
 ```
 
-## Key Configuration Files
+### Backend (Go)
+All Go commands must be run from the `backend/` directory:
 
-- `pubspec.yaml` - Flutter project configuration, dependencies, assets
-- `analysis_options.yaml` - Dart analyzer configuration with flutter_lints rules
-- `android/app/build.gradle.kts` - Android build configuration
-- `ios/Runner.xcodeproj/` - iOS project configuration
+```bash
+cd backend/
+go mod tidy                  # Clean up dependencies
+go run cmd/server/main.go    # Run development server
+go build -o server cmd/server/main.go  # Build binary
+go test ./...                # Run tests
+```
 
-## Development Environment
+### Full Stack Development
+From the root directory:
 
-- Dart SDK: ^3.8.1
-- Uses flutter_lints for code quality enforcement
-- Material Design with Cupertino Icons for cross-platform UI consistency
-- Hot reload is available during development (`r` in terminal or IDE hot reload)
+```bash
+docker-compose up            # Start all services
+docker-compose down          # Stop all services
+```
+
+## Mobile App Architecture
+
+- **State Management**: Uses Riverpod with StateNotifier pattern
+- **UI**: HookConsumerWidget instead of StatefulWidget for cleaner code
+- **Dependencies**: flutter_riverpod, flutter_hooks, hooks_riverpod
+- **Testing**: Widgets wrapped with ProviderScope for Riverpod integration
+
+## Backend Architecture
+
+- **Server**: Go with net/http
+- **GraphQL**: Schema-first approach with gqlgen (when implemented)
+- **Structure**: Clean architecture with internal packages for business logic
+
+## Key Files
+
+- `mobile/pubspec.yaml` - Flutter dependencies and configuration
+- `backend/go.mod` - Go module dependencies
+- `backend/graph/schema.graphqls` - GraphQL schema definition
+- `docker-compose.yml` - Local development environment setup
